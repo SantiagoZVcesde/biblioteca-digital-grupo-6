@@ -67,7 +67,7 @@ Desarrollar una plataforma web que facilite el acceso a la lectura digital media
 | Santiago Sánchez Rojas  | Líder / Backend            | @piolin666satan    |
 | Santiago Zapata Villada | Frontend Lead              | @SantiagoZVcesde   |
 | [Nombre 3]              | Backend / Base de datos    | @[usuario]         |
-| [Nombre 4]              | [rol]                      | @[usuario]         |
+| [Nombre 4]              | [rol]                      | @[usuario]         |   
 
 ---
 
@@ -78,74 +78,55 @@ Desarrollar una plataforma web que facilite el acceso a la lectura digital media
 
 ---
 
-## 🚀 Instrucciones de Instalación y Ejecución (para desarrolladores)
+## 🚀 Instrucciones de Instalación y Ejecución
 
-Sigue estos pasos para configurar el entorno de desarrollo y ejecutar el proyecto "Biblioteca Digital Grupo 6" localmente.
+Sigue estos pasos para configurar el entorno de desarrollo y ejecutar el proyecto **Alquimia Literaria** localmente.
 
 ### Prerrequisitos
 
-Asegúrate de tener instalado lo siguiente en tu máquina:
+Asegúrate de tener instalado lo siguiente:
 
-*   **Node.js:** Versión 18 o superior. Verifica con `node -v`.
-*   **npm** o **yarn:** Gestor de paquetes. Verifica con `npm -v` o `yarn -v`.
-*   **PostgreSQL:** Versión 14 o superior (necesaria para correr la base de datos localmente).
-*   **Git:** Para clonar el repositorio. Verifica con `git --version`.
-*   **(Opcional) IDE:** Como VS Code (recomendado para proyectos con Prisma).
+* **Java JDK 21:** Necesario para el backend. Verifica con `java -version`.
+* **Maven:** Gestor de proyectos Java. Verifica con `mvn -v`.
+* **PostgreSQL:** Versión 14 o superior.
+* **Node.js & npm:** (Solo para la carpeta del frontend).
+* **Git:** Para clonar el repositorio.
 
 ### Pasos para la Instalación
 
 1.  **Clonar el repositorio**
-    Abre tu terminal y ejecuta el siguiente comando:
     ```bash
-    git clone https://github.com/piolin666satan/biblioteca-digital-grupo-6.git
-    ```
-
-2.  **Acceder al directorio del proyecto**
-    ```bash
+    git clone [https://github.com/piolin666satan/biblioteca-digital-grupo-6.git](https://github.com/piolin666satan/biblioteca-digital-grupo-6.git)
     cd biblioteca-digital-grupo-6
     ```
 
-3.  **Instalar dependencias**
+2.  **Configurar la Base de Datos**
+    Crea una base de datos en PostgreSQL llamada `alquimia_db`. Luego, ubica el archivo `src/main/resources/application.properties` (o crea un `application-dev.properties`) y configura tus credenciales:
+    ```properties
+    spring.datasource.url=jdbc:postgresql://localhost:5432/alquimia_db
+    spring.datasource.username=tu_usuario
+    spring.datasource.password=tu_contraseña
+    spring.jpa.hibernate.ddl-auto=update
+    ```
+
+3.  **Compilar y Ejecutar el Backend (Spring Boot)**
+    Desde la raíz del proyecto backend:
     ```bash
+    mvn clean install
+    mvn spring-boot:run
+    ```
+
+4.  **Configurar y Ejecutar el Frontend (React)**
+    En una nueva terminal, navega a la carpeta del frontend:
+    ```bash
+    cd frontend-folder # Reemplaza con el nombre real de tu carpeta
     npm install
-    ```
-    o si usas yarn:
-    ```bash
-    yarn install
+    npm run dev
     ```
 
-4.  **Configurar la base de datos con Prisma**
-    Prisma necesita una URL de conexión para acceder a tu base de datos PostgreSQL. Crea un archivo `.env` en la raíz del proyecto (si no existe) y añade las siguiente líneas:
-
-    ```env
-   DB_URL=jdbc:postgresql://localhost:5432/tu_base_de_datos
-   DB_USERNAME=tu_usuario
-   DB_PASSWORD=tu_contraseña
-    ```
-5.  **Sincronizar el esquema de Prisma con la base de datos**
-    Una vez configurada la URL, ejecuta el siguiente comando para crear las tablas en tu base de datos según el esquema de Prisma:
-
-    ```bash
-    npx prisma db push
-    ```
-
-    > Este comando sincroniza tu esquema de Prisma con la base de datos sin crear migraciones. Si prefieres usar migraciones, puedes ejecutar:
-    > ```bash
-    > npx prisma migrate dev --name init
-    > ```
-
-6.  **Generar el cliente de Prisma**
-    Para asegurarte de que el cliente de Prisma esté actualizado:
-    ```bash
-    npx prisma generate
-    ```
-
-7.  **(Opcional) Explorar la base de datos con Prisma Studio**
-    Prisma incluye un explorador visual muy útil para ver y editar los datos:
-    ```bash
-    npx prisma studio
-    ```
-    Se abrirá automáticamente en `http://localhost:5555`
+### Acceso a la API
+Una vez que el servidor esté corriendo, puedes consultar la documentación de los endpoints en:
+`http://localhost:8080/swagger-ui/index.html`
 
 ### Ejecutar la Aplicación
 
