@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,6 +31,11 @@ public abstract class BaseEntity {
     @CreatedDate
     @Column(name = "fecha_registro", nullable = false, updatable = false)
     private LocalDateTime fechaRegristro;
+    private Long id;
+
+    @CreatedDate
+    @Column(name = "fecha_registro", nullable = false, updatable = false)
+    private LocalDateTime fechaRegistro;
 
     @LastModifiedDate
     @Column(name = "fecha_modificacion")
