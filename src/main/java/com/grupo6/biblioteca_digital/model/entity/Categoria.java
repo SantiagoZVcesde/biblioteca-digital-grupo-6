@@ -1,5 +1,7 @@
 package com.grupo6.biblioteca_digital.model.entity;
 
+public class Categoria {
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
