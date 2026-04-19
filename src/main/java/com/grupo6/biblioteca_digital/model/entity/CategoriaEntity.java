@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "categorias")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Categoria extends BaseEntity {
+public class CategoriaEntity extends BaseEntity {
 
     @Column(name = "nombre", nullable = false, unique = true)
     private String nombre;

@@ -6,9 +6,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.*;
-import jakarta.persistence.MappedSuperclass;
 import lombok.Setter;
 import lombok.Getter;
 
@@ -29,4 +27,10 @@ public abstract class BaseEntity {
     @LastModifiedDate
     @Column(name = "fecha_modificacion")
     private LocalDateTime fechaModificacion;
+
+    //pone la fecha de registro (actual) al momento de crear el objeto, esto es para asegurar que siempre tenga una fecha de registro, incluso si no se utiliza el repositorio para guardarlo
+@PrePersist
+protected void onCreate() {
+    this.fechaRegistro = LocalDateTime.now();
+}
 }

@@ -1,5 +1,5 @@
 package com.grupo6.biblioteca_digital.model.entity;
 
-public class Cliente {
+public class ReferenciaPersonalEntity {
     
 }
