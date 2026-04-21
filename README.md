@@ -66,7 +66,7 @@ Desarrollar una plataforma web que facilite el acceso a la lectura digital media
 |-------------------------|----------------------------|--------------------|
 | Santiago Sánchez Rojas  | Líder / Backend            | @piolin666satan    |
 | Santiago Zapata Villada | Frontend Lead              | @SantiagoZVcesde   |
-| [Nombre 3]              | Backend / Base de datos    | @[usuario]         |
+| Josue Restrepo arango   | Full-Stack Developer       | @josuerestrepo     |
 | [Nombre 4]              | [rol]                      | @[usuario]         |   
 
 ---
