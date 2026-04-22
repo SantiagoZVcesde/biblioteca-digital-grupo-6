@@ -28,10 +28,23 @@ public class LibroEntity extends BaseEntity{
     @Column(name = "editorial", nullable = false)
     private String editorial;
 
+    private Double precio;
+    private Integer cantidad;
+
     @Enumerated(EnumType.STRING)
     private EstadoLibro estado;
 
     @ManyToOne
-    @JoinColumn(name = "categoria_id")
+    @JoinColumn(name = "categoria_id", nullable=false)
     private CategoriaEntity categoria;
+
+
+    public void actualizarDisponibilidad() {
+        if (this.cantidad != null && this.cantidad > 0) {
+            this.estado = EstadoLibro.DISPONIBLE;
+        } else {
+            this.estado = EstadoLibro.NO_DISPONIBLE;
+        }
+    }
+
 }

@@ -1,11 +1,16 @@
 package com.grupo6.biblioteca_digital.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.grupo6.biblioteca_digital.model.entity.LibroEntity;
+import java.util.List;
+
 
 @Repository
 public interface  LibroRepository extends JpaRepository<LibroEntity, Long> {
-    
+    Optional<LibroEntity>  findByTitulo(String titulo);
+
 }
