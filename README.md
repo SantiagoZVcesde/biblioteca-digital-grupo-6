@@ -66,7 +66,7 @@ Desarrollar una plataforma web que facilite el acceso a la lectura digital media
 |-------------------------|----------------------------|--------------------|
 | Santiago Sánchez Rojas  | Líder / Backend            | @piolin666satan    |
 | Santiago Zapata Villada | Frontend Lead              | @SantiagoZVcesde   |
-| [Nombre 3]              | Backend / Base de datos    | @[usuario]         |
+| Josue Restrepo arango   | Full-Stack Developer       | @josuerestrepo     |
 | [Nombre 4]              | [rol]                      | @[usuario]         |   
 
 ---
@@ -132,3 +132,73 @@ Una vez configurada la base de datos, compila y ejecuta el backend utilizando el
 
 mvnw.cmd spring-boot:run
 Nota: El servidor se iniciará por defecto en el puerto 8080. Puedes verificar que la API está activa accediendo a la documentación de Swagger en http://localhost:8080/swagger-ui/index.html.
+
+# Biblioteca Spring Boot - Módulo de Categoría y Libro
+
+Este módulo fue desarrollado para gestionar categorías y libros dentro del sistema de biblioteca. La idea principal fue permitir que los libros se registren directamente con el nombre de la categoría, evitando el uso de IDs crudos y asegurando estados por defecto.
+
+# Funcionalidades implementadas
+
+# Categoría
+
+Entidad con atributos: id, nombre, descripcion.
+
+Controlador que permite crear categorías usando nombres semánticos.
+
+Servicio que valida duplicados y devuelve mensajes claros.
+
+# Libro
+
+Entidad con atributos: id, titulo, autor, estado (por defecto: "DISPONIBLE"), y relación con Categoria.
+
+Controlador que permite registrar un libro indicando el nombre de la categoría.
+
+Servicio que busca la categoría por nombre y enlaza automáticamente.
+
+Ejemplo de Endpoint para agregar un libro
+
+Request
+
+POST /api/libro
+Content-Type: application/json
+
+{
+  "autor": "Laura Gómez",
+  "editorial": "Sombras Eternas",
+  "titulo": "La Última Puerta",
+  "isbn": "978-84-376-5678-9",
+  "categoria": {
+    "nombre": "Fantasía Oscura"
+  }
+}
+
+
+Response
+
+
+Instrucciones para agregar un libro
+
+Crear la categoría (si no existe) mediante POST /api/categorias.
+
+POST /api/categorias
+Content-Type: application/json
+
+{
+  "nombre": "Novela",
+  "descripcion": "Narrativa extensa en prosa"
+}
+
+Registrar el libro indicando el nombre de la categoría.
+
+POST /api/libros
+Content-Type: application/json
+
+{
+  "titulo": "El coronel no tiene quien le escriba",
+  "autor": "Gabriel García Márquez",
+  "categoria": "Novela"
+}
+
+El sistema asignará automáticamente el estado inicial DISPONIBLE y enlazará el libro con la categoría indicada.
+
+Este README documenta el trabajo realizado en el módulo de categoría y libro, mostrando cómo se diseñó para ser semántico, claro y fácil de usar.
