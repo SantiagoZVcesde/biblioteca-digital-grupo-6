@@ -1,8 +1,10 @@
 package com.grupo6.biblioteca_digital.Controller;
 
-import com.grupo6.biblioteca_digital.model.entity.Compra;
+import com.grupo6.biblioteca_digital.model.dto.CompraCreateDTO;
+import com.grupo6.biblioteca_digital.model.dto.CompraDTO;
 import com.grupo6.biblioteca_digital.service.CompraService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,27 +20,28 @@ public class CompraController {
 
     // Obtener todas las compras
     @GetMapping
-    public List<Compra> listar() {
+    public List<CompraDTO> listar() {
         return compraService.listarCompras();
     }
 
-    // Guardar una nueva compra
+    // Guardar una nueva compra (Recibe CreateDTO)
     @PostMapping
-    public ResponseEntity<Compra> guardar(@RequestBody Compra compra) {
-        return ResponseEntity.ok(compraService.registrarCompra(compra));
+    public ResponseEntity<CompraDTO> guardar(@RequestBody CompraCreateDTO compraDto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(compraService.registrarCompra(compraDto));
     }
 
     // Obtener una compra por ID
     @GetMapping("/{id}")
-    public ResponseEntity<Compra> obtenerUno(@PathVariable Long id) {
-        Compra compra = compraService.buscarPorId(id);
+    public ResponseEntity<CompraDTO> obtenerUno(@PathVariable Long id) {
+        CompraDTO compra = compraService.buscarPorId(id);
         return compra != null ? ResponseEntity.ok(compra) : ResponseEntity.notFound().build();
     }
 
-    // Actualizar una compra existente
+    // Actualizar una compra existente (Recibe CreateDTO)
     @PutMapping("/{id}")
-    public ResponseEntity<Compra> actualizar(@PathVariable Long id, @RequestBody Compra compra) {
-        Compra actualizada = compraService.actualizarCompra(id, compra);
+    public ResponseEntity<CompraDTO> actualizar(@PathVariable Long id, @RequestBody CompraCreateDTO compraDto) {
+        CompraDTO actualizada = compraService.actualizarCompra(id, compraDto);
         return actualizada != null ? ResponseEntity.ok(actualizada) : ResponseEntity.notFound().build();
     }
 
