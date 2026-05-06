@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.grupo6.biblioteca_digital.Enums.EstadoLibro;
+import com.grupo6.biblioteca_digital.model.dto.LibroDTO;
 import com.grupo6.biblioteca_digital.model.entity.CategoriaEntity;
 import com.grupo6.biblioteca_digital.model.entity.LibroEntity;
 import com.grupo6.biblioteca_digital.repository.CategoriaRepository;
@@ -77,5 +78,16 @@ public class LibroControlador {
     @DeleteMapping("/{id}")
     public void eliminarLibro(@PathVariable Long id) {
         libroServices.eliminarLibro(id);
+    }
+
+        
+        @GetMapping("/dto")
+    public List<LibroDTO> listarLibrosDTO() {
+        return libroServices.listarLibrosDTO();
+    }
+
+    @PostMapping("/dto")
+    public LibroDTO crearLibroDTO(@RequestBody LibroDTO libroDTO) {
+        return libroServices.guardarLibroDTO(libroDTO);
     }
 }
