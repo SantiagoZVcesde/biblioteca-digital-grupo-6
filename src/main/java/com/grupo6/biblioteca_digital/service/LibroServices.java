@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-
+import com.grupo6.biblioteca_digital.model.dto.LibroDTO;
 import com.grupo6.biblioteca_digital.model.entity.CategoriaEntity;
 import com.grupo6.biblioteca_digital.model.entity.LibroEntity;
 import com.grupo6.biblioteca_digital.repository.CategoriaRepository;
@@ -62,5 +62,57 @@ public LibroEntity crearLibro(LibroEntity libro) {
     libro.actualizarDisponibilidad();
     return libroRepository.save(libro);  // ✅ Único return
 }
+
+    private LibroDTO toDTO(LibroEntity entity) {
+    LibroDTO dto = new LibroDTO();
+    dto.setId(entity.getId());
+    dto.setTitulo(entity.getTitulo());
+    dto.setPrecio(entity.getPrecio());
+    return dto;
+    }
+
+        private LibroEntity toEntity(LibroDTO dto, CategoriaEntity categoria) {
+        LibroEntity entity = new LibroEntity();
+        entity.setTitulo(dto.getTitulo());
+        entity.setCantidad(dto.getCantidad());
+        entity.setCategoria(categoria);
+        return entity;
+    
+
+    }
+
+        public List<LibroDTO> listarLibrosDTO() {
+        return libroRepository.findAll()
+                .stream()
+                .map(this::toDTO)
+                .toList();
+    }
+        // Guardar libro usando DTO
+    public LibroDTO guardarLibroDTO(LibroDTO libroDTO) {
+        // Buscar categoría por nombre
+        Optional<CategoriaEntity> categoriaOpt = categoriaRepository.findByNombre(libroDTO.getCategoria());
+    
+        // Si no existe, crear nueva
+        CategoriaEntity categoria = categoriaOpt.orElseGet(() -> {
+            CategoriaEntity nuevaCategoria = new CategoriaEntity();
+            nuevaCategoria.setNombre(libroDTO.getCategoria()); 
+            nuevaCategoria.setDescripcion("Categoría creada automáticamente");
+            return categoriaRepository.save(nuevaCategoria);
+        });
+    
+        // Validar si ya existe un libro con el mismo título
+        Optional<LibroEntity> existente = libroRepository.findByTitulo(libroDTO.getTitulo());
+        if (existente.isPresent()) {
+            LibroEntity libroExistente = existente.get();
+            libroExistente.setCantidad(libroExistente.getCantidad() + libroDTO.getCantidad());
+            libroRepository.save(libroExistente);
+            return toDTO(libroExistente);
+        }
+    
+        // Crear nuevo libro
+        LibroEntity nuevo = toEntity(libroDTO, categoria);
+        libroRepository.save(nuevo);
+        return toDTO(nuevo);
+    }
 }
 
