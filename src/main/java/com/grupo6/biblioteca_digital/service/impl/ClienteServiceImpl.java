@@ -3,7 +3,6 @@ package com.grupo6.biblioteca_digital.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-// Importa los nombres EXACTOS de tus archivos
 import com.grupo6.biblioteca_digital.model.dto.ClienteDTO;
 import com.grupo6.biblioteca_digital.model.embeddable.Contacto;
 import com.grupo6.biblioteca_digital.model.entity.ClienteEntity;
