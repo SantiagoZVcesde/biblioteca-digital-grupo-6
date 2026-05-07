@@ -11,10 +11,8 @@ public class LibroDTO {
     
     private Long id;
     private String titulo;
-
     private Integer cantidad;
     private Double precio;
     private EstadoLibro estado;
     private String categoria;
-  
 }
