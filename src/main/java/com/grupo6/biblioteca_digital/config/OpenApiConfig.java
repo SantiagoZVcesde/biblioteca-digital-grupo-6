@@ -15,5 +15,6 @@ public class OpenApiConfig {
         .title("API de Alquimia-Literaria")
         .version("1.0.0")
         .description("Documentación técnica de los servicios REST para la biblioteca digital."));
+        
     }
 }
