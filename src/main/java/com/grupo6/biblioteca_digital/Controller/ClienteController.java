@@ -16,16 +16,28 @@ import org.springframework.web.bind.annotation.RestController;
 import com.grupo6.biblioteca_digital.model.dto.ClienteDTO;
 import com.grupo6.biblioteca_digital.service.ClienteService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api/v1/clientes")
+@Tag(name = "Clientes", description = "Gestión de usuarios y lectores de la biblioteca")
 public class ClienteController {
     
     @Autowired
     private ClienteService clienteService;
     
+    @Operation(summary = "Registrar nuevo cliente", description = "Crea un nuevo cliente en el sistema y le asigna un ID único.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Cliente creado exitosamente"),
+        @ApiResponse(responseCode = "400", description = "Datos inválidos en el JSON enviado")
+    })
 
     @PostMapping
-    public ResponseEntity<ClienteDTO> crear(@RequestBody ClienteDTO dto) {
+    public ResponseEntity<ClienteDTO> crear(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos planos del cliente a registrar") @RequestBody ClienteDTO dto) {
         return ResponseEntity.ok(clienteService.guardar(dto));
     }
 
@@ -37,8 +49,10 @@ public class ClienteController {
     }
 
     // GET: Obtener un cliente específico por su ID
+    @Operation(summary = "Obtener cliente por ID", description = "Recupera los detalles de un cliente especifico utilizando su ID unico.")
     @GetMapping("/{id}")
-    public ResponseEntity<ClienteDTO> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<ClienteDTO> obtenerPorId(@Parameter(description = "ID unico del cliente a recuperar")
+        @PathVariable Long id) {
         return ResponseEntity.ok(clienteService.obtenerPorId(id));
     }
 
