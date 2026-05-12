@@ -8,6 +8,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
@@ -18,12 +19,12 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class PrestamosEntity extends BaseEntity {
 
-    @ManyToOne
-    @JoinColumn(name = "cliente_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cliente_id", nullable = false)
     private ClienteEntity cliente;
 
-    @ManyToOne
-    @JoinColumn(name = "libro_:id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "libro_id", nullable = false)
     private LibroEntity libro;
 
     @Column(name = "fecha_salida", nullable = false)

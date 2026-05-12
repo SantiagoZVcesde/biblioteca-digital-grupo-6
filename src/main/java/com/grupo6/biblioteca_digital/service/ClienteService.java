@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.grupo6.biblioteca_digital.model.dto.ClienteDTO;
+import com.grupo6.biblioteca_digital.model.dto.ClienteRegistroDTO;
 
 @Service
 public interface ClienteService {
@@ -14,4 +15,5 @@ public interface ClienteService {
     ClienteDTO obtenerPorId(Long id);
     ClienteDTO actualizar(Long id, ClienteDTO dto);
     void eliminar(Long id);
+    ClienteDTO registrar(ClienteRegistroDTO dto);
 }
