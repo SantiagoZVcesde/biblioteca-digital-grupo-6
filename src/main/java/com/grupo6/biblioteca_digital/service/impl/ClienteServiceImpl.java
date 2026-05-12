@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.grupo6.biblioteca_digital.model.dto.ClienteDTO;
+import com.grupo6.biblioteca_digital.model.dto.ClienteRegistroDTO;
 import com.grupo6.biblioteca_digital.model.embeddable.Contacto;
 import com.grupo6.biblioteca_digital.model.entity.ClienteEntity;
 import com.grupo6.biblioteca_digital.service.ClienteService;
@@ -17,6 +18,32 @@ public class ClienteServiceImpl implements ClienteService { // Una sola 'l'
 
     @Autowired
     private ClienteRepository repository; // 'repository' en minúscula es mejor práctica
+
+@Override
+public ClienteDTO registrar(ClienteRegistroDTO dto) {
+    // 1. Mapeamos manualmente para incluir los campos nuevos
+    ClienteEntity entidad = new ClienteEntity();
+    entidad.setNombre(dto.getNombre());
+    entidad.setApellido(dto.getApellido());
+    entidad.setTipoIdentidad(dto.getTipoIdentidad());
+    entidad.setNumeroIdentidad(dto.getNumeroIdentidad());
+    
+    // Configurar contacto (como ya lo haces)
+    Contacto con = new Contacto();
+    con.setEmail(dto.getEmail());
+    con.setTelefono(dto.getTelefono());
+    con.setDireccion(dto.getDireccion());
+    entidad.setContacto(con);
+
+    // 2. AÑADIMOS LO NUEVO
+    entidad.setPassword(dto.getPassword()); // La clave secreta
+    entidad.setRol(dto.getRol());           // El poder (ADMIN/CLIENTE)
+
+    // 3. Guardar en DB
+    repository.save(entidad);
+    
+    return mapearDTO(entidad); // Devolvemos el DTO normal (SIN password)
+}
 
 @Override
     public ClienteDTO guardar(ClienteDTO dto) {

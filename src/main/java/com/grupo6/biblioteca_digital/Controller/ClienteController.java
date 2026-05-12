@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.grupo6.biblioteca_digital.model.dto.ClienteDTO;
+import com.grupo6.biblioteca_digital.model.dto.ClienteRegistroDTO;
 import com.grupo6.biblioteca_digital.service.ClienteService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,6 +30,12 @@ public class ClienteController {
     
     @Autowired
     private ClienteService clienteService;
+
+    @Operation(summary = "Registrar usuario con credenciales", description = "Crea un cliente incluyendo su contraseña y rol de acceso.")
+    @PostMapping("/registro")
+    public ResponseEntity<ClienteDTO> registrar(@RequestBody ClienteRegistroDTO dto) {
+        return ResponseEntity.ok(clienteService.registrar(dto));
+}
     
     @Operation(summary = "Registrar nuevo cliente", description = "Crea un nuevo cliente en el sistema y le asigna un ID único.")
     @ApiResponses({

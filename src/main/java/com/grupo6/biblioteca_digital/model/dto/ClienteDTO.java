@@ -26,4 +26,5 @@ public class ClienteDTO {
     private String direccion;
     @Schema(description = "Teléfono del cliente", example = "555-1234")
     private String telefono;
+    
 }

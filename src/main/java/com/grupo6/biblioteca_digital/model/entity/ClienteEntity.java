@@ -2,6 +2,7 @@ package com.grupo6.biblioteca_digital.model.entity;
 
 import java.util.List;
 
+import com.grupo6.biblioteca_digital.Enums.Rol;
 import com.grupo6.biblioteca_digital.Enums.TipoIdentidad;
 import com.grupo6.biblioteca_digital.model.embeddable.Contacto;
 
@@ -43,10 +44,19 @@ public class ClienteEntity extends BaseEntity {
     @Embedded
     private Contacto contacto;
 
-    @OneToMany(mappedBy = "cliente")
-    private List<PrestamosEntity> prestamos;
-
     @Column(name = "activo", nullable = false)
     private Boolean activo = true;
 
+    @Column(name = "password", nullable = false)
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Rol rol = Rol.CLIENTE; //por defecto todos son clientes
+
+    @OneToMany(mappedBy = "cliente")
+    private List<Compra> compras;
+
+    @OneToMany(mappedBy = "cliente")
+    private List<PrestamosEntity> prestamos;
 }

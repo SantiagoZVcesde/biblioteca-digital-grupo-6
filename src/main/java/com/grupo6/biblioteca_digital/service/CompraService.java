@@ -2,8 +2,13 @@ package com.grupo6.biblioteca_digital.service;
 
 import com.grupo6.biblioteca_digital.model.dto.CompraCreateDTO;
 import com.grupo6.biblioteca_digital.model.dto.CompraDTO;
+import com.grupo6.biblioteca_digital.model.entity.ClienteEntity;
 import com.grupo6.biblioteca_digital.model.entity.Compra;
+import com.grupo6.biblioteca_digital.model.entity.LibroEntity;
+import com.grupo6.biblioteca_digital.repository.ClienteRepository;
 import com.grupo6.biblioteca_digital.repository.CompraRepository;
+import com.grupo6.biblioteca_digital.repository.LibroRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +21,12 @@ public class CompraService {
 
     @Autowired
     private CompraRepository compraRepository;
+
+    @Autowired
+    private ClienteRepository clienteRepository;
+
+    @Autowired
+    private LibroRepository libroRepository;
 
     // Obtener todas las compras (Retorna lista de DTOs)
     public List<CompraDTO> listarCompras() {
@@ -35,7 +46,31 @@ public class CompraService {
     // Registrar una nueva compra (Recibe CreateDTO y retorna DTO)
     @Transactional
     public CompraDTO registrarCompra(CompraCreateDTO dto) {
-        Compra compra = toEntity(dto);
+
+        //primero revisar si hay un cliente con el ID y un libro con el ID,
+        ClienteEntity cliente = clienteRepository.findById(dto.clienteId())
+        .orElseThrow(() -> new RuntimeException("Cliente no encontrado con ID:" + dto.clienteId()));
+
+        LibroEntity libro = libroRepository.findById(dto.libroId())
+        .orElseThrow(() -> new RuntimeException("Libro no encontrado con ID: " + dto.libroId()));
+
+        //logica de negocio ¿hay suficientes libros en stock?:
+        if (libro.getCantidad() < dto.cantidad()) {
+            throw new RuntimeException("Ya no hay suficientes libros en stock para esta compra (stocke actual: " + libro.getCantidad() + ")");
+        }
+
+        //Actualizar el stock del libro resteando la cantidad comprada
+        libro.setCantidad(libro.getCantidad() - dto.cantidad());
+        libroRepository.save(libro);
+
+        //crear la compra y guardarla
+        Compra compra = new Compra();
+        compra.setCliente(cliente); //uniendo la compra con el cliente encontrado
+        compra.setLibro(libro); //uniendo la compra con el libro encontrado
+        compra.setProveedor(dto.proveedor());
+        compra.setMonto(dto.monto());
+        compra.setCantidad(dto.cantidad());
+
         // Aquí podrías luego sumar la 'cantidad' al stock global si fuera necesario
         Compra compraGuardada = compraRepository.save(compra);
         return toDTO(compraGuardada);
@@ -65,19 +100,13 @@ public class CompraService {
 
     // --- MÉTODOS DE MAPEO MANUAL ---
 
-    // Convierte de DTO de creación a Entidad
-    private Compra toEntity(CompraCreateDTO dto) {
-        Compra compra = new Compra();
-        compra.setProveedor(dto.proveedor());
-        compra.setMonto(dto.monto());
-        compra.setCantidad(dto.cantidad());
-        return compra;
-    }
-
     // Convierte de Entidad a DTO de respuesta
     private CompraDTO toDTO(Compra entidad) {
         return new CompraDTO(
             entidad.getId(),
+            entidad.getCliente().getId(),
+            entidad.getLibro().getId(),
+            entidad.getLibro().getTitulo(), //para que react pueda mostrar el titulo del libro en vez del ID
             entidad.getProveedor(),
             entidad.getMonto(),
             entidad.getCantidad(),
