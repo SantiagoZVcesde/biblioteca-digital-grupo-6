@@ -1,18 +1,29 @@
 package com.grupo6.biblioteca_digital.model.dto;
 
-import com.grupo6.biblioteca_digital.Enums.EstadoLibro;
-
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Schema(description = "DTO que representa un libro")
 public class LibroDTO {
-    
+
+    @Schema(description = "ID único del libro", example = "1")
     private Long id;
+
+    @Schema(description = "Título del libro", example = "Drácula")
     private String titulo;
+
+    @Schema(description = "Cantidad disponible", example = "10")
     private Integer cantidad;
+
+    @Schema(description = "Precio del libro", example = "45000")
     private Double precio;
-    private EstadoLibro estado;
+
+    @Schema(description = "Estado del libro", example = "DISPONIBLE")
+    private Boolean estado;
+
+    @Schema(description = "Categoría del libro", example = "Terror")
     private String categoria;
 }

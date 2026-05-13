@@ -13,106 +13,197 @@ import com.grupo6.biblioteca_digital.repository.LibroRepository;
 
 @Service
 public class LibroServices {
+
     private final LibroRepository libroRepository;
     private final CategoriaRepository categoriaRepository;
 
-    public LibroServices(LibroRepository libroRepository, CategoriaRepository categoriaRepository) {
+    public LibroServices(
+            LibroRepository libroRepository,
+            CategoriaRepository categoriaRepository) {
+
         this.libroRepository = libroRepository;
         this.categoriaRepository = categoriaRepository;
     }
 
-    // Listar todos los libros
-    public List<LibroEntity> listarLibros() {
-        return libroRepository.findAll();
-    }
+    // =========================
+    // LISTAR
+    // =========================
 
+    public List<LibroDTO> listarLibrosDTO() {
 
-    // Buscar libro por ID
-    public Optional<LibroEntity> buscarPorId(Long id) {
-        return libroRepository.findById(id);
-    }
-    public void eliminarLibro(Long id) {
-        libroRepository.deleteById(id);
-    }
-
-
-public LibroEntity crearLibro(LibroEntity libro) {
-    // Validar categoría
-    CategoriaEntity categoria = categoriaRepository.findByNombre(libro.getCategoria().getNombre())
-        .orElseGet(() -> {
-            CategoriaEntity nuevaCategoria = new CategoriaEntity();
-            nuevaCategoria.setNombre(libro.getCategoria().getNombre());
-            nuevaCategoria.setDescripcion("Categoría creada automáticamente");
-            return categoriaRepository.save(nuevaCategoria);
-        });
-
-    libro.setCategoria(categoria);
-
-    // Validar por título (evitar duplicados)
-    Optional<LibroEntity> existente = libroRepository.findByTitulo(libro.getTitulo());
-
-    if (existente.isPresent()) {
-        LibroEntity libroExistente = existente.get();
-        libroExistente.setCantidad(libroExistente.getCantidad() + libro.getCantidad());
-        libroExistente.actualizarDisponibilidad();
-        return libroRepository.save(libroExistente);
-    }
-
-    // Si no existe, crear nuevo
-    libro.actualizarDisponibilidad();
-    return libroRepository.save(libro);  // ✅ Único return
-}
-
-    private LibroDTO toDTO(LibroEntity entity) {
-    LibroDTO dto = new LibroDTO();
-    dto.setId(entity.getId());
-    dto.setTitulo(entity.getTitulo());
-    dto.setPrecio(entity.getPrecio());
-    return dto;
-    }
-
-        private LibroEntity toEntity(LibroDTO dto, CategoriaEntity categoria) {
-        LibroEntity entity = new LibroEntity();
-        entity.setTitulo(dto.getTitulo());
-        entity.setCantidad(dto.getCantidad());
-        entity.setCategoria(categoria);
-        return entity;
-    
-
-    }
-
-        public List<LibroDTO> listarLibrosDTO() {
         return libroRepository.findAll()
                 .stream()
                 .map(this::toDTO)
                 .toList();
     }
-        // Guardar libro usando DTO
-    public LibroDTO guardarLibroDTO(LibroDTO libroDTO) {
-        // Buscar categoría por nombre
-        Optional<CategoriaEntity> categoriaOpt = categoriaRepository.findByNombre(libroDTO.getCategoria());
-    
-        // Si no existe, crear nueva
-        CategoriaEntity categoria = categoriaOpt.orElseGet(() -> {
-            CategoriaEntity nuevaCategoria = new CategoriaEntity();
-            nuevaCategoria.setNombre(libroDTO.getCategoria()); 
-            nuevaCategoria.setDescripcion("Categoría creada automáticamente");
-            return categoriaRepository.save(nuevaCategoria);
-        });
-    
-        // Validar si ya existe un libro con el mismo título
-        Optional<LibroEntity> existente = libroRepository.findByTitulo(libroDTO.getTitulo());
-        if (existente.isPresent()) {
-            LibroEntity libroExistente = existente.get();
-            libroExistente.setCantidad(libroExistente.getCantidad() + libroDTO.getCantidad());
-            libroRepository.save(libroExistente);
-            return toDTO(libroExistente);
-        }
-    
-        // Crear nuevo libro
-        LibroEntity nuevo = toEntity(libroDTO, categoria);
-        libroRepository.save(nuevo);
-        return toDTO(nuevo);
-    }
-}
 
+    // =========================
+    // BUSCAR POR ID
+    // =========================
+
+    public Optional<LibroDTO> buscarPorId(Long id) {
+
+        return libroRepository.findById(id)
+                .map(this::toDTO);
+    }
+
+    // =========================
+    // ELIMINAR
+    // =========================
+
+    public void eliminarLibro(Long id) {
+
+        if (!libroRepository.existsById(id)) {
+            throw new RuntimeException("Libro no encontrado");
+        }
+
+        libroRepository.deleteById(id);
+    }
+
+    // =========================
+    // CREAR LIBRO
+    // =========================
+
+    public LibroDTO guardarLibroDTO(LibroDTO libroDTO) {
+
+        // ========= VALIDACIONES =========
+
+        if (libroDTO.getTitulo() == null || libroDTO.getTitulo().isBlank()) {
+            throw new RuntimeException("El título es obligatorio");
+        }
+
+        if (libroDTO.getCantidad() <= 0) {
+            throw new RuntimeException("La cantidad debe ser mayor a 0");
+        }
+
+        if (libroDTO.getCategoria() == null || libroDTO.getCategoria().isBlank()) {
+            throw new RuntimeException("La categoría es obligatoria");
+        }
+
+        // ========= BUSCAR O CREAR CATEGORIA =========
+
+        CategoriaEntity categoria = categoriaRepository
+                .findByNombre(libroDTO.getCategoria())
+                .orElseGet(() -> {
+
+                    CategoriaEntity nuevaCategoria = new CategoriaEntity();
+
+                    nuevaCategoria.setNombre(libroDTO.getCategoria());
+
+                    nuevaCategoria.setDescripcion("Categoría creada automáticamente");
+
+                    return categoriaRepository.save(nuevaCategoria);
+                });
+
+        // ========= VALIDAR DUPLICADOS =========
+
+        Optional<LibroEntity> existente =
+                libroRepository.findByTitulo(libroDTO.getTitulo());
+
+        if (existente.isPresent()) {
+
+            LibroEntity libroExistente = existente.get();
+
+            libroExistente.setCantidad(
+                    libroExistente.getCantidad() + libroDTO.getCantidad());
+
+            libroExistente.actualizarDisponibilidad();
+
+            LibroEntity actualizado = libroRepository.save(libroExistente);
+
+            return toDTO(actualizado);
+        }
+
+        // ========= CREAR NUEVO =========
+
+        LibroEntity nuevoLibro = toEntity(libroDTO, categoria);
+
+        nuevoLibro.actualizarDisponibilidad();
+
+        LibroEntity guardado = libroRepository.save(nuevoLibro);
+
+        return toDTO(guardado);
+    }
+
+    // =========================
+    // ACTUALIZAR
+    // =========================
+
+    public LibroDTO actualizarLibro(Long id, LibroDTO libroDTO) {
+
+        LibroEntity libro = libroRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Libro no encontrado"));
+
+        libro.setTitulo(libroDTO.getTitulo());
+
+        libro.setCantidad(libroDTO.getCantidad());
+
+        libro.setPrecio(libroDTO.getPrecio());
+
+        // Buscar categoría
+        CategoriaEntity categoria = categoriaRepository
+                .findByNombre(libroDTO.getCategoria())
+                .orElseGet(() -> {
+
+                    CategoriaEntity nueva = new CategoriaEntity();
+
+                    nueva.setNombre(libroDTO.getCategoria());
+
+                    nueva.setDescripcion("Categoría creada automáticamente");
+
+                    return categoriaRepository.save(nueva);
+                });
+
+        libro.setCategoria(categoria);
+
+        libro.actualizarDisponibilidad();
+
+        LibroEntity actualizado = libroRepository.save(libro);
+
+        return toDTO(actualizado);
+    }
+
+    // =========================
+    // DTO -> ENTITY
+    // =========================
+
+    private LibroEntity toEntity(
+            LibroDTO dto,
+            CategoriaEntity categoria) {
+
+        LibroEntity entity = new LibroEntity();
+
+        entity.setTitulo(dto.getTitulo());
+
+        entity.setCantidad(dto.getCantidad());
+
+        entity.setPrecio(dto.getPrecio());
+
+        entity.setCategoria(categoria);
+
+        return entity;
+    }
+
+    // =========================
+    // ENTITY -> DTO
+    // =========================
+private LibroDTO toDTO(LibroEntity entity) {
+
+    LibroDTO dto = new LibroDTO();
+
+    dto.setId(entity.getId());
+
+    dto.setTitulo(entity.getTitulo());
+
+    dto.setCantidad(entity.getCantidad());
+
+    dto.setPrecio(entity.getPrecio());
+
+    dto.setEstado(entity.getEstado() == com.grupo6.biblioteca_digital.Enums.EstadoLibro.DISPONIBLE);
+
+    dto.setCategoria(entity.getCategoria().getNombre());
+
+    return dto;
+}
+}

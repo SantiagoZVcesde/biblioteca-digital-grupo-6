@@ -201,4 +201,123 @@ Content-Type: application/json
 
 El sistema asignará automáticamente el estado inicial DISPONIBLE y enlazará el libro con la categoría indicada.
 
-Este README documenta el trabajo realizado en el módulo de categoría y libro, mostrando cómo se diseñó para ser semántico, claro y fácil de usar.
+
+# Implementación de DTOs y Documentación OpenAPI con Swagger
+Descripción
+
+Durante esta implementación se realizó una mejora estructural del backend de la API libros de Biblioteca Digital utilizando:
+
+DTOs (Data Transfer Objects)
+Documentación OpenAPI con Swagger
+Validaciones y separación de responsabilidades
+
+El objetivo principal fue mejorar la arquitectura del proyecto, evitar exponer directamente las entidades (Entity) y generar documentación automática y profesional de los endpoints REST.
+
+# Beneficios implementados
+
++ Separación entre Entity y API REST
++ Mayor seguridad
++ Mejor organización del código
++ Control de datos enviados al frontend
++ Evita exponer relaciones JPA innecesarias
++ Facilita validaciones y mantenimiento
+
+# Funciones implementadas en LibroService
+
+# listarLibrosDTO()
+
+Obtiene todos los libros registrados y los transforma a DTO.
+
+* public List<LibroDTO> listarLibrosDTO()
+
+# buscarPorId()
+
+Busca un libro por su ID y devuelve un DTO.
+
+* public Optional<LibroDTO> buscarPorId(Long id)
+
+# guardarLibroDTO()
+
+Función principal de creación y validación de libros.
+
+* public LibroDTO guardarLibroDTO(LibroDTO libroDTO)
+
+# Validaciones implementadas
+* Título obligatorio
+* Cantidad mayor a 0
+* Categoría obligatoria
+
+# Lógica implementada
+* Creación automática de categorías
+* Validación de libros duplicados
+* Suma automática de stock
+* Actualización de disponibilidad
+
+# actualizarLibro()
+
+Actualiza la información de un libro existente.
+
+* public LibroDTO actualizarLibro(Long id, LibroDTO libroDTO)
+
+# eliminarLibro()
+
+Elimina un libro utilizando su ID.
+
+* public void eliminarLibro(Long id)
+
+# Implementación OpenAPI con Swagger
+Objetivo
+
+Se integró Swagger/OpenAPI para generar documentación automática e interactiva de la API REST.
+
+# Documentación del Controller
+
+Se implementaron anotaciones OpenAPI en LibroController.
+
+# @Tag
+
+Agrupa los endpoints por módulos.
+
+* @Tag(
+    name = "Libros",
+    description = "Gestión completa de libros"
+)
+
+# @Operation
+
+Describe la funcionalidad de cada endpoint.
+
+* @Operation(
+    summary = "Listar libros",
+    description = "Obtiene todos los libros registrados"
+)
+
+# @ApiResponses
+
+Documenta respuestas HTTP posibles.
+
+* @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "Operación exitosa"),
+    @ApiResponse(responseCode = "404", description = "Libro no encontrado")
+})
+
+# @Parameter
+
+Documenta parámetros enviados en URL.
+
+* @Parameter(description = "ID único del libro")
+
+# Endpoints documentados
+Método|	Endpoint	      |    Descripción             |
+------|-----------------|----------------------------|
+GET	  |/api/libros	    |   Obtener todos los libros |
+GET	  |/api/libros/{id}	|   Buscar libro por ID      |
+POST	|/api/libros	    |   Crear libro              |
+PUT	  |/api/libros/{id}	|   Actualizar libro         |
+DELETE|/api/libros/{id}	|   Eliminar libro           |
+ 
+# Swagger UI
+
+La documentación interactiva puede visualizarse en:
+
+http://localhost:8080/swagger-ui/index.html
