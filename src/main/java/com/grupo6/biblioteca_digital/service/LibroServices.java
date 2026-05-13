@@ -200,7 +200,7 @@ private LibroDTO toDTO(LibroEntity entity) {
 
     dto.setPrecio(entity.getPrecio());
 
-    dto.setEstado(entity.getEstado());
+    dto.setEstado(entity.getEstado() == com.grupo6.biblioteca_digital.Enums.EstadoLibro.DISPONIBLE);
 
     dto.setCategoria(entity.getCategoria().getNombre());
 
